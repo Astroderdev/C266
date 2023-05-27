@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 
 app = Flask(__name__)
-
+increase = 0
 
 @app.route('/')
 def upload_form():
@@ -15,6 +15,8 @@ def upload_form():
 
 @app.route('/', methods=['POST'])
 def upload_image():
+    global increase
+    increase = increase+1
     image_file = request.files['file']
     degree = int(request.form['text'])
     filename = secure_filename(image_file.filename)
@@ -22,8 +24,9 @@ def upload_image():
     image = Image.open(image_file)
     image_rotation_degree = image.rotate(degree)
     rgb_im = image.convert('RGB')
-    image_rotation_degree.save(os.path.join('static/', 'rotated_image.png'))
-    img_rotate = 'rotated_image.png'
+    image_rotation_degree.save(os.path.join('static/', 'rotated_image'+str(increase)+'.png'))
+    img_rotate = 'rotated_image'+ str(increase) +'.png'
+    print(img_rotate)
 
     return render_template('upload.html', filename=img_rotate)
 
